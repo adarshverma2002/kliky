@@ -29,30 +29,42 @@ class _videoPageState extends State<videoPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Preview"),
-        elevation: 0,
-        backgroundColor: Colors.black26,
-        actions: [
-          IconButton(
-            icon: Icon(Icons.check),
-            onPressed: () {
-              print("do something with file");
-            },
-          )
-        ],
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: Colors.black87,
+        appBar: AppBar(
+          title: Text("Preview"),
+          elevation: 0,
+          backgroundColor: Colors.black26,
+          actions: [
+            IconButton(
+              icon: Icon(Icons.check),
+              onPressed: () {
+                print(
+                    "do something with file"); // upload video file to firebase
+              },
+            )
+          ],
+        ),
+        extendBodyBehindAppBar: true,
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            FutureBuilder(
+                future: _initVideoPlayer(),
+                builder: (context, state) {
+                  if (state.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else {
+                    return AspectRatio(
+                      aspectRatio: _videoPlayerController.value.aspectRatio,
+                      child: VideoPlayer(_videoPlayerController),
+                    );
+                  }
+                }),
+          ],
+        ),
       ),
-      extendBodyBehindAppBar: true,
-      body: FutureBuilder(
-          future: _initVideoPlayer(),
-          builder: (context, state) {
-            if (state.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            } else {
-              return VideoPlayer(_videoPlayerController);
-            }
-          }),
     );
   }
 }
